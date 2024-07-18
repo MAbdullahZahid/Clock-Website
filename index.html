@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="download.png" type="image/x-icon">
+    <title>Abdullah Clock</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        #date {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        #time {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #61dafb;
+        }
+        .separator {
+            margin: 0 5px;
+        }
+        #day {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        .stopwatch-container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 297px;
+        }
+        #stopwatch {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .button {
+            font-size: 1em;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #61dafb;
+            color: #282c34;
+        }
+        .button:hover {
+            background-color: #21a1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heading">
+            <h1>Current Time</h1>
+        </div>
+        <div id="date">January 1, 2024</div>
+        <div id="time">
+            <span id="hour">00</span>
+            <span class="separator">:</span>
+            <span id="minute">00</span>
+            <span class="separator">:</span>
+            <span id="second">00</span>
+            <span id="am-pm">AM</span>
+        </div>
+        <div id="day">Monday</div>
+    </div>
+
+    <div class="stopwatch-container">
+        <div id="stopwatch">00:00:00</div>
+        <button class="button" id="startStop">Start</button>
+        <button class="button" id="reset">Reset</button>
+    </div>
+
+    <script>
+        function displayTime() {
+            const time = new Date();
+            let hours = time.getHours();
+            let minutes = time.getMinutes();
+            let seconds = time.getSeconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+
+            const dayName = days[time.getDay()];
+            const monthName = months[time.getMonth()];
+            const day = time.getDate();
+            const year = time.getFullYear();
+
+            document.getElementById('hour').textContent = hours;
+            document.getElementById('minute').textContent = minutes;
+            document.getElementById('second').textContent = seconds;
+            document.getElementById('am-pm').textContent = ampm;
+            document.getElementById('day').textContent = dayName;
+            document.getElementById('date').textContent = `${monthName} ${day}, ${year}`;
+        }
+        setInterval(displayTime, 1000);
+        displayTime(); 
+
+     
+        let stopwatchInterval;
+        let stopwatchRunning = false;
+        let elapsedSeconds = 0;
+
+        function updateStopwatch() {
+            elapsedSeconds++;
+            const hours = Math.floor(elapsedSeconds / 3600);
+            const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+            const seconds = elapsedSeconds % 60;
+
+            const displayHours = hours < 10 ? '0' + hours : hours;
+            const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
+            const displaySeconds = seconds < 10 ? '0' + seconds : seconds;
+
+            document.getElementById('stopwatch').textContent = `${displayHours}:${displayMinutes}:${displaySeconds}`;
+        }
+
+        document.getElementById('startStop').addEventListener('click', function() {
+            if (stopwatchRunning) {
+                clearInterval(stopwatchInterval);
+                this.textContent = 'Start';
+            } else {
+                stopwatchInterval = setInterval(updateStopwatch, 1000);
+                this.textContent = 'Stop';
+            }
+            stopwatchRunning = !stopwatchRunning;
+        });
+
+        document.getElementById('reset').addEventListener('click', function() {
+            clearInterval(stopwatchInterval);
+            stopwatchRunning = false;
+            elapsedSeconds = 0;
+            document.getElementById('stopwatch').textContent = '00:00:00';
+            document.getElementById('startStop').textContent = 'Start';
+        });
+    </script>
+</body>
+</html>
